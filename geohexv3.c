@@ -246,6 +246,7 @@ geohexv3_get_zone_by_code(const char *code, struct geohexv3_zone *zone)
 	}
 	zone->lat = h_loc.lat;
 	zone->lon = h_loc.lon;
+	zone->level = level - 2;
 	zone->x = h_x;
 	zone->y = h_y;
 	return 0;

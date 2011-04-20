@@ -1,7 +1,86 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "geohexv3.h"
+
+void
+test_encode(const char *fname)
+{
+	FILE *f = fopen(fname, "r");
+	char buf[BUFSIZ];
+	int succ = 0, fail = 0;
+	int res;
+	struct geohexv3_zone *zone = geohexv3_zone_alloc();
+
+	if (!zone) {
+		fprintf(stderr, "alloc failed\n");
+		return;
+	}
+
+	while (fgets(buf, sizeof(buf), f) != NULL) {
+		double lat, lon;
+		int level;
+		char code[BUFSIZ];
+		int r = sscanf(buf,"%lf,%lf,%d,%s", &lat, &lon, &level, code);
+		if (r != 4) {
+			continue;
+		}
+		res = geohexv3_get_zone_by_location(lat, lon, level, zone);
+		if (res == 0 && strcmp(code, zone->code) == 0) {
+			succ ++;
+		} else {
+			fail ++;
+		}
+	}
+	fclose(f);
+	geohexv3_zone_free(zone);
+
+	printf("Encode: succ: %d, fail: %d\n", succ, fail);
+}
+
+void
+test_decode(const char *fname)
+{
+	FILE *f = fopen(fname, "r");
+	char buf[BUFSIZ];
+	int succ = 0, fail = 0;
+	int res;
+	struct geohexv3_zone *zone = geohexv3_zone_alloc();
+	struct geohexv3_zone *zone2 = geohexv3_zone_alloc();
+
+	if (!zone || !zone2) {
+		fprintf(stderr, "alloc failed\n");
+		return;
+	}
+
+	while (fgets(buf, sizeof(buf), f) != NULL) {
+		double lat, lon;
+		int level;
+		char code[BUFSIZ];
+		int r = sscanf(buf,"%lf,%lf,%d,%s", &lat, &lon, &level, code);
+		if (r != 4) {
+			continue;
+		}
+		res = geohexv3_get_zone_by_code(code, zone);
+		if (res < 0) {
+			fail ++;
+			continue;
+		}
+		res = geohexv3_get_zone_by_location(zone->lat, zone->lon, zone->level, zone2);
+		if (res == 0 && strcmp(code, zone2->code) == 0) {
+			succ ++;
+		} else {
+			fprintf(stderr, "%d %s %s\n", res, code, zone2->code);
+			fail ++;
+		}
+	}
+	fclose(f);
+	geohexv3_zone_free(zone);
+	geohexv3_zone_free(zone2);
+
+	printf("Decode: succ: %d, fail: %d\n", succ, fail);
+}
 
 int
 main(int argc, char *argv[])
@@ -35,4 +114,7 @@ main(int argc, char *argv[])
 	printf("bb337184418811744 -> %.15f,%.15f,%d\n", zone->lat, zone->lon, zone->level);
 
 	geohexv3_zone_free(zone);
+
+	test_encode("encode.txt");
+	test_decode("decode.txt");
 }
