@@ -11,6 +11,8 @@ static const char * const H_KEY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 static const double H_BASE = 20037508.34;
 static const double H_DEG = M_PI * (30.0 / 180.0);
 #define H_K (tan(H_DEG))
+static const int MAX_LEVEL = 15;
+#define MAX_CODE_LEN (MAX_LEVEL + 2)
 
 struct xy {
 	double x, y;
@@ -53,6 +55,11 @@ geohexv3_zone_alloc(void)
 		return NULL;
 	}
 	memset(v, 0, sizeof(*v));
+	v->code = malloc(MAX_CODE_LEN + 1);
+	if (!v->code) {
+		free(v);
+		return NULL;
+	}
 	return v;
 }
 
@@ -68,7 +75,7 @@ int
 geohexv3_get_zone_by_location(double lat, double lon, int level, struct geohexv3_zone *zone)
 {
 	if (lat < -90 || lat > 90 || lon < -180 || lon > 180 ||
-		level < 0 || level > 15) {
+		level < 0 || level > MAX_LEVEL) {
 		return -EINVAL;
 	}
 	level += 2;
@@ -141,29 +148,25 @@ geohexv3_get_zone_by_location(double lat, double lon, int level, struct geohexv3
 		}
 	}
 
+	memset(zone->code, 0, MAX_CODE_LEN + 1);
 	int h_1 = 0;
-	char h_2[32] = {0}; // XXX adjust size to fit to the max len
-	for (i = 0; i <= level; ++i) {
+	for (i = 0; i < 3; ++i) {
 		int d = code3_x[i] * 3 + code3_y[i];
-		if (i < 3) {
-			h_1 = h_1 * 10 + d;
-		} else {
-			h_2[i - 3] = '0' + d;
-		}
+		h_1 = h_1 * 10 + d;
 	}
 	int h_a1 = h_1 / 30;
 	int h_a2 = h_1 % 30;
-	char *result = malloc(32); // XXX adjust to max size
-	snprintf(result, 32, "%c%c%s", H_KEY[h_a1], H_KEY[h_a2], h_2);
+	zone->code[0] = H_KEY[h_a1];
+	zone->code[1] = H_KEY[h_a2];
 
-	if (zone->code) {
-		free(zone->code);
+	for (i = 3; i <= level; ++i) {
+		int d = code3_x[i] * 3 + code3_y[i];
+		zone->code[i - 1] = '0' + d;
 	}
 	zone->lat = z_loc_y;
 	zone->lon = z_loc_x;
 	zone->x = h_x;
 	zone->y = h_y;
-	zone->code = result;
 	return 0;
 }
 
