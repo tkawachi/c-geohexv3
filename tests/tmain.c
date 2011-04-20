@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 
 #include "geohexv3.h"
 
@@ -21,6 +22,10 @@ test_encode(const char *fname)
 	int res;
 	struct geohexv3_zone *zone = geohexv3_zone_alloc();
 
+	if (!f) {
+		perror("fopen");
+		return;
+	}
 	if (!zone) {
 		fprintf(stderr, "alloc failed\n");
 		return;
@@ -57,6 +62,10 @@ test_decode(const char *fname)
 	struct geohexv3_zone *zone = geohexv3_zone_alloc();
 	struct geohexv3_zone *zone2 = geohexv3_zone_alloc();
 
+	if (!f) {
+		perror("fopen");
+		return;
+	}
 	if (!zone || !zone2) {
 		fprintf(stderr, "alloc failed\n");
 		return;
@@ -131,4 +140,5 @@ main(int argc, char *argv[])
 
 	test_encode("encode.txt");
 	test_decode("decode.txt");
+	return 0;
 }

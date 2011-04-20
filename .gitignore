@@ -1,4 +1,14 @@
 *~
 *.o
 *.swp
+*.lo
+*.la
+
+/autom4te.cache
+Makefile
+config.log
+config.status
+.deps/
+.libs/
+
 tmain
