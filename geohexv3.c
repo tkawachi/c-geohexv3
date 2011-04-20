@@ -172,5 +172,81 @@ geohexv3_get_zone_by_location(double lat, double lon, int level, struct geohexv3
 int
 geohexv3_get_zone_by_code(const char *code, struct geohexv3_zone *zone)
 {
-	return -1;
+	int level = strlen(code);
+	if (level - 2 < 0 || level - 2 > MAX_LEVEL) {
+		return -1;
+	}
+	double h_size = calc_hex_size(level);
+	double unit_x = 6 * h_size;
+	double unit_y = 6 * h_size * H_K;
+
+	int h_a = 0;
+	char *cp;
+	cp = strchr(H_KEY, code[0]);
+	if (!cp) {
+		return -1;
+	}
+	h_a += (cp - H_KEY) * 30;
+	cp = strchr(H_KEY, code[1]);
+	if (!cp) {
+		return -1;
+	}
+	h_a += (cp - H_KEY);
+	/* TODO incomplete impl */
+
+	int h_decx[level + 1];
+	int h_decy[level + 1];
+
+	h_decx[0] = (h_a / 100) / 3;
+	h_decy[0] = (h_a / 100) % 3;
+	h_a %= 100;
+	h_decx[1] = (h_a / 10) / 3;
+	h_decy[1] = (h_a / 10) % 3;
+	h_a %= 10;
+	h_decx[2] = (h_a) / 3;
+	h_decy[2] = (h_a) % 3;
+
+	int i;
+	for (i = 3; i <= level; ++i) {
+		int n = code[i - 1] - '0';
+		if (n < 0 || n > 8) {
+			return -1;
+		}
+		h_decx[i] = n / 3;
+		h_decy[i] = n % 3;
+	}
+
+	long h_x = 0;
+	long h_y = 0;
+	for (i = 0; i <= level; ++i) {
+		double h_pow = pow(3, level - i);
+		if (h_decx[i] == 0) {
+			h_x -= h_pow;
+		} else if (h_decx[i] == 2) {
+			h_x += h_pow;
+		}
+		if (h_decy[i] == 0) {
+			h_y -= h_pow;
+		} else if (h_decy[i] == 2) {
+			h_y += h_pow;
+		}
+	}
+
+	double h_lat_y = (H_K * h_x * unit_x + h_y * unit_y) / 2;
+	double h_lon_x = (h_lat_y - h_y * unit_y) / H_K;
+	struct loc h_loc = xy2loc(h_lon_x, h_lat_y);
+	if (h_loc.lon > 180) {
+		h_loc.lon -= 360;
+	} else if (h_loc.lon < -180) {
+		h_loc.lon += 360;
+	}
+
+	if (zone->code != code) {
+		strcpy(zone->code, code);
+	}
+	zone->lat = h_loc.lat;
+	zone->lon = h_loc.lon;
+	zone->x = h_x;
+	zone->y = h_y;
+	return 0;
 }

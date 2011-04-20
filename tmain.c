@@ -26,5 +26,13 @@ main(int argc, char *argv[])
 		exit(1);
 	}
 	printf("85.05112507763846,89.37952995300293,15 -> %s\n", zone->code);
+
+	res = geohexv3_get_zone_by_code("bb337184418811744", zone);
+	if (res < 0) {
+		fprintf(stderr, "geohexv3_get_zone_by_code() failed\n");
+		exit(1);
+	}
+	printf("bb337184418811744 -> %.15f,%.15f,%d\n", zone->lat, zone->lon, zone->level);
+
 	geohexv3_zone_free(zone);
 }
