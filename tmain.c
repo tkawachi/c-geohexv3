@@ -1,8 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "geohexv3.h"
+
+#define EPSILON 1e-10
+int
+eqdouble(double a, double b)
+{
+	return fabs(a - b) < EPSILON;
+}
 
 void
 test_encode(const char *fname)
@@ -63,7 +71,13 @@ test_decode(const char *fname)
 			continue;
 		}
 		res = geohexv3_get_zone_by_code(code, zone);
-		if (res < 0) {
+		if (res < 0 ||
+			!eqdouble(lat, zone->lat) ||
+			!eqdouble(lon, zone->lon) ||
+			level != zone->level) {
+			fprintf(stderr, "%d, %lf %lf, %lf %lf, %d %d\n",
+				res, lat, zone->lat, lon, zone->lon,
+				level, zone->level);
 			fail ++;
 			continue;
 		}
