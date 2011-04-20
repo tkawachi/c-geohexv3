@@ -192,19 +192,28 @@ geohexv3_get_zone_by_code(const char *code, struct geohexv3_zone *zone)
 		return -1;
 	}
 	h_a += (cp - H_KEY);
-	/* TODO incomplete impl */
+
+	int h_a0 = (h_a % 1000) / 100;
+	int h_a1 = (h_a % 100) / 10;
+	int h_a2 = (h_a % 10);
+	if (h_a1 != 1 && h_a1 != 2 && h_a1 != 5 &&
+		h_a2 != 1 && h_a2 != 2 && h_a2 != 5) {
+		if (h_a0 == 5) {
+			h_a0 = 7;
+		} else if (h_a0 == 1) {
+			h_a0 = 3;
+		}
+	}
 
 	int h_decx[level + 1];
 	int h_decy[level + 1];
 
-	h_decx[0] = (h_a / 100) / 3;
-	h_decy[0] = (h_a / 100) % 3;
-	h_a %= 100;
-	h_decx[1] = (h_a / 10) / 3;
-	h_decy[1] = (h_a / 10) % 3;
-	h_a %= 10;
-	h_decx[2] = (h_a) / 3;
-	h_decy[2] = (h_a) % 3;
+	h_decx[0] = h_a0 / 3;
+	h_decy[0] = h_a0 % 3;
+	h_decx[1] = h_a1 / 3;
+	h_decy[1] = h_a1 % 3;
+	h_decx[2] = h_a2 / 3;
+	h_decy[2] = h_a2 % 3;
 
 	int i;
 	for (i = 3; i <= level; ++i) {
