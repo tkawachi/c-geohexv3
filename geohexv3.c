@@ -1,6 +1,5 @@
 #include "geohexv3.h"
 
-#include <errno.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,7 +75,7 @@ geohexv3_get_zone_by_location(double lat, double lon, int level, struct geohexv3
 {
 	if (lat < -90 || lat > 90 || lon < -180 || lon > 180 ||
 		level < 0 || level > MAX_LEVEL) {
-		return -EINVAL;
+		return -1;
 	}
 	level += 2;
 	double h_size = calc_hex_size(level);
