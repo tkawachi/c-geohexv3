@@ -76,6 +76,7 @@ geohexv3_get_zone_by_location(double lat, double lon, int level, struct geohexv3
 		level < 0 || level > MAX_LEVEL) {
 		return -1;
 	}
+	zone->level = level;
 	level += 2;
 	double h_size = calc_hex_size(level);
 	struct xy z_zy = loc2xy(lon, lat);
