@@ -1,4 +1,4 @@
-noinst_PROGRAMS = tmain
+check_PROGRAMS = tmain
 tmain_SOURCES = tmain.c
 tmain_LDFLAGS = -L../src
 tmain_LDADD = -lgeohex3
