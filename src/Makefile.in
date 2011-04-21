@@ -59,6 +59,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am_geohex3_OBJECTS = main.$(OBJEXT)
 geohex3_OBJECTS = $(am_geohex3_OBJECTS)
 geohex3_DEPENDENCIES = libgeohex3.la
+geohex3_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(geohex3_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -190,6 +193,7 @@ lib_LTLIBRARIES = libgeohex3.la
 libgeohex3_la_SOURCES = geohex3.c geohex3.h
 geohex3_SOURCES = main.c
 geohex3_LDADD = libgeohex3.la
+geohex3_LDFLAGS = -lc -lm
 all: all-am
 
 .SUFFIXES:
@@ -282,7 +286,7 @@ clean-binPROGRAMS:
 	done
 geohex3$(EXEEXT): $(geohex3_OBJECTS) $(geohex3_DEPENDENCIES) 
 	@rm -f geohex3$(EXEEXT)
-	$(LINK) $(geohex3_OBJECTS) $(geohex3_LDADD) $(LIBS)
+	$(geohex3_LINK) $(geohex3_OBJECTS) $(geohex3_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
