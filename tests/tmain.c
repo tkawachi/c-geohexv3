@@ -4,7 +4,7 @@
 #include <math.h>
 #include <errno.h>
 
-#include "geohexv3.h"
+#include "geohex3.h"
 
 #define EPSILON 1e-10
 int
@@ -20,7 +20,7 @@ test_encode(const char *fname)
 	char buf[BUFSIZ];
 	int succ = 0, fail = 0;
 	int res;
-	struct geohexv3_zone *zone = geohexv3_zone_alloc();
+	struct geohex3_zone *zone = geohex3_zone_alloc();
 
 	if (!f) {
 		perror("fopen");
@@ -39,7 +39,7 @@ test_encode(const char *fname)
 		if (r != 4) {
 			continue;
 		}
-		res = geohexv3_get_zone_by_location(lat, lon, level, zone);
+		res = geohex3_get_zone_by_location(lat, lon, level, zone);
 		if (res == 0 && strcmp(code, zone->code) == 0) {
 			succ ++;
 		} else {
@@ -47,7 +47,7 @@ test_encode(const char *fname)
 		}
 	}
 	fclose(f);
-	geohexv3_zone_free(zone);
+	geohex3_zone_free(zone);
 
 	printf("Encode: succ: %d, fail: %d\n", succ, fail);
 }
@@ -59,8 +59,8 @@ test_decode(const char *fname)
 	char buf[BUFSIZ];
 	int succ = 0, fail = 0;
 	int res;
-	struct geohexv3_zone *zone = geohexv3_zone_alloc();
-	struct geohexv3_zone *zone2 = geohexv3_zone_alloc();
+	struct geohex3_zone *zone = geohex3_zone_alloc();
+	struct geohex3_zone *zone2 = geohex3_zone_alloc();
 
 	if (!f) {
 		perror("fopen");
@@ -79,7 +79,7 @@ test_decode(const char *fname)
 		if (r != 4) {
 			continue;
 		}
-		res = geohexv3_get_zone_by_code(code, zone);
+		res = geohex3_get_zone_by_code(code, zone);
 		if (res < 0 ||
 			!eqdouble(lat, zone->lat) ||
 			!eqdouble(lon, zone->lon) ||
@@ -90,7 +90,7 @@ test_decode(const char *fname)
 			fail ++;
 			continue;
 		}
-		res = geohexv3_get_zone_by_location(zone->lat, zone->lon, zone->level, zone2);
+		res = geohex3_get_zone_by_location(zone->lat, zone->lon, zone->level, zone2);
 		if (res == 0 && strcmp(code, zone2->code) == 0) {
 			succ ++;
 		} else {
@@ -99,8 +99,8 @@ test_decode(const char *fname)
 		}
 	}
 	fclose(f);
-	geohexv3_zone_free(zone);
-	geohexv3_zone_free(zone2);
+	geohex3_zone_free(zone);
+	geohex3_zone_free(zone2);
 
 	printf("Decode: succ: %d, fail: %d\n", succ, fail);
 }
@@ -108,35 +108,35 @@ test_decode(const char *fname)
 int
 main(int argc, char *argv[])
 {
-	struct geohexv3_zone *zone = geohexv3_zone_alloc();
+	struct geohex3_zone *zone = geohex3_zone_alloc();
 	if (zone == NULL) {
 		fprintf(stderr, "alloc failed\n");
 		exit(1);
 	}
-	int res = geohexv3_get_zone_by_location(
+	int res = geohex3_get_zone_by_location(
 		33.35137950146622,135.6104480957031,0, zone);
 	if (res < 0) {
-		fprintf(stderr, "geohexv3_get_zone_by_location() failed\n");
+		fprintf(stderr, "geohex3_get_zone_by_location() failed\n");
 		exit(1);
 	}
 	printf("33.35137950146622,135.6104480957031,0 -> %s\n", zone->code);
 
-	res = geohexv3_get_zone_by_location(
+	res = geohex3_get_zone_by_location(
 		85.05112507763846,89.37952995300293,15, zone);
 	if (res < 0) {
-		fprintf(stderr, "geohexv3_get_zone_by_location() failed\n");
+		fprintf(stderr, "geohex3_get_zone_by_location() failed\n");
 		exit(1);
 	}
 	printf("85.05112507763846,89.37952995300293,15 -> %s\n", zone->code);
 
-	res = geohexv3_get_zone_by_code("bb337184418811744", zone);
+	res = geohex3_get_zone_by_code("bb337184418811744", zone);
 	if (res < 0) {
-		fprintf(stderr, "geohexv3_get_zone_by_code() failed\n");
+		fprintf(stderr, "geohex3_get_zone_by_code() failed\n");
 		exit(1);
 	}
 	printf("bb337184418811744 -> %.15f,%.15f,%d\n", zone->lat, zone->lon, zone->level);
 
-	geohexv3_zone_free(zone);
+	geohex3_zone_free(zone);
 
 	test_encode("encode.txt");
 	test_decode("decode.txt");

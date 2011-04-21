@@ -2248,7 +2248,7 @@ fi
 
 
 # Define the identity of the package.
- PACKAGE=geohexv3
+ PACKAGE=geohex3
  VERSION=1.0
 
 

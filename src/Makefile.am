@@ -1,2 +1,2 @@
-lib_LTLIBRARIES = libgeohexv3.la
-libgeohexv3_la_SOURCES = geohexv3.c geohexv3.h
+lib_LTLIBRARIES = libgeohex3.la
+libgeohex3_la_SOURCES = geohex3.c geohex3.h

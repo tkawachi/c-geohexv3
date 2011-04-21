@@ -49,9 +49,9 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libgeohexv3_la_LIBADD =
-am_libgeohexv3_la_OBJECTS = geohexv3.lo
-libgeohexv3_la_OBJECTS = $(am_libgeohexv3_la_OBJECTS)
+libgeohex3_la_LIBADD =
+am_libgeohex3_la_OBJECTS = geohex3.lo
+libgeohex3_la_OBJECTS = $(am_libgeohex3_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -64,8 +64,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libgeohexv3_la_SOURCES)
-DIST_SOURCES = $(libgeohexv3_la_SOURCES)
+SOURCES = $(libgeohex3_la_SOURCES)
+DIST_SOURCES = $(libgeohex3_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -177,8 +177,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-lib_LTLIBRARIES = libgeohexv3.la
-libgeohexv3_la_SOURCES = geohexv3.c geohexv3.h
+lib_LTLIBRARIES = libgeohex3.la
+libgeohex3_la_SOURCES = geohex3.c geohex3.h
 all: all-am
 
 .SUFFIXES:
@@ -239,8 +239,8 @@ clean-libLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libgeohexv3.la: $(libgeohexv3_la_OBJECTS) $(libgeohexv3_la_DEPENDENCIES) 
-	$(LINK) -rpath $(libdir) $(libgeohexv3_la_OBJECTS) $(libgeohexv3_la_LIBADD) $(LIBS)
+libgeohex3.la: $(libgeohex3_la_OBJECTS) $(libgeohex3_la_DEPENDENCIES) 
+	$(LINK) -rpath $(libdir) $(libgeohex3_la_OBJECTS) $(libgeohex3_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -248,7 +248,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geohexv3.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geohex3.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

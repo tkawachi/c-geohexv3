@@ -1,5 +1,5 @@
 AC_INIT(geohex3, 1.0, tkawachi@gmail.com)
-AM_INIT_AUTOMAKE(geohexv3, 1.0)
+AM_INIT_AUTOMAKE(geohex3, 1.0)
 AC_PROG_CC
 AC_PROG_LIBTOOL
 AC_OUTPUT([Makefile src/Makefile tests/Makefile])

@@ -1,4 +1,4 @@
-#include "geohexv3.h"
+#include "geohex3.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -44,10 +44,10 @@ xy2loc(double x, double y) {
 	return result;
 }
 
-struct geohexv3_zone*
-geohexv3_zone_alloc(void)
+struct geohex3_zone*
+geohex3_zone_alloc(void)
 {
-	struct geohexv3_zone *v;
+	struct geohex3_zone *v;
 	v = malloc(sizeof(*v));
 	if (!v) {
 		return NULL;
@@ -62,7 +62,7 @@ geohexv3_zone_alloc(void)
 }
 
 void
-geohexv3_zone_free(struct geohexv3_zone *zone)
+geohex3_zone_free(struct geohex3_zone *zone)
 {
 	if (zone->code)
 		free(zone->code);
@@ -70,7 +70,7 @@ geohexv3_zone_free(struct geohexv3_zone *zone)
 }
 
 int
-geohexv3_get_zone_by_location(double lat, double lon, int level, struct geohexv3_zone *zone)
+geohex3_get_zone_by_location(double lat, double lon, int level, struct geohex3_zone *zone)
 {
 	if (lat < -90 || lat > 90 || lon < -180 || lon > 180 ||
 		level < 0 || level > MAX_LEVEL) {
@@ -170,7 +170,7 @@ geohexv3_get_zone_by_location(double lat, double lon, int level, struct geohexv3
 }
 
 int
-geohexv3_get_zone_by_code(const char *code, struct geohexv3_zone *zone)
+geohex3_get_zone_by_code(const char *code, struct geohex3_zone *zone)
 {
 	int level = strlen(code);
 	if (level - 2 < 0 || level - 2 > MAX_LEVEL) {
