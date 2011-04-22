@@ -6,105 +6,6 @@
 
 #include "geohex3.h"
 
-#define EPSILON 1e-10
-int
-eqdouble(double a, double b)
-{
-	return fabs(a - b) < EPSILON;
-}
-
-void
-test_encode(const char *fname)
-{
-	FILE *f = fopen(fname, "r");
-	char buf[BUFSIZ];
-	int succ = 0, fail = 0;
-	int res;
-	struct geohex3_zone *zone = geohex3_zone_alloc();
-
-	if (!f) {
-		perror("fopen");
-		return;
-	}
-	if (!zone) {
-		fprintf(stderr, "alloc failed\n");
-		return;
-	}
-
-	while (fgets(buf, sizeof(buf), f) != NULL) {
-		double lat, lon;
-		int level;
-		char code[BUFSIZ];
-		int r = sscanf(buf,"%lf,%lf,%d,%s", &lat, &lon, &level, code);
-		if (r != 4) {
-			continue;
-		}
-		res = geohex3_get_zone_by_location(lat, lon, level, zone);
-		if (res == 0 && strcmp(code, zone->code) == 0) {
-			succ ++;
-		} else {
-			fail ++;
-		}
-	}
-	fclose(f);
-	geohex3_zone_free(zone);
-
-	printf("Encode: succ: %d, fail: %d\n", succ, fail);
-}
-
-void
-test_decode(const char *fname)
-{
-	FILE *f = fopen(fname, "r");
-	char buf[BUFSIZ];
-	int succ = 0, fail = 0;
-	int res;
-	struct geohex3_zone *zone = geohex3_zone_alloc();
-	struct geohex3_zone *zone2 = geohex3_zone_alloc();
-
-	if (!f) {
-		perror("fopen");
-		return;
-	}
-	if (!zone || !zone2) {
-		fprintf(stderr, "alloc failed\n");
-		return;
-	}
-
-	while (fgets(buf, sizeof(buf), f) != NULL) {
-		double lat, lon;
-		int level;
-		char code[BUFSIZ];
-		int r = sscanf(buf,"%lf,%lf,%d,%s", &lat, &lon, &level, code);
-		if (r != 4) {
-			continue;
-		}
-		res = geohex3_get_zone_by_code(code, zone);
-		if (res < 0 ||
-			!eqdouble(lat, zone->lat) ||
-			!eqdouble(lon, zone->lon) ||
-			level != zone->level) {
-			fprintf(stderr, "%d, %lf %lf, %lf %lf, %d %d\n",
-				res, lat, zone->lat, lon, zone->lon,
-				level, zone->level);
-			fail ++;
-			continue;
-		}
-		res = geohex3_get_zone_by_location(zone->lat, zone->lon, zone->level, zone2);
-		if (res == 0 && strcmp(code, zone2->code) == 0) {
-			succ ++;
-		} else {
-			fprintf(stderr, "%d %s %s\n", res, code, zone2->code);
-			fail ++;
-		}
-	}
-	fclose(f);
-	geohex3_zone_free(zone);
-	geohex3_zone_free(zone2);
-
-	printf("Decode: succ: %d, fail: %d\n", succ, fail);
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -137,8 +38,5 @@ main(int argc, char *argv[])
 	printf("bb337184418811744 -> %.15f,%.15f,%d\n", zone->lat, zone->lon, zone->level);
 
 	geohex3_zone_free(zone);
-
-	test_encode("encode.txt");
-	test_decode("decode.txt");
 	return 0;
 }

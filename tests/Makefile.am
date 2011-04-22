@@ -1,6 +1,5 @@
-check_PROGRAMS = tmain
-tmain_SOURCES = tmain.c
-tmain_LDFLAGS = -L../src -lgeohex3 -lc -lm
-tmain_CPPFLAGS = -I../src
+check_PROGRAMS = tmain encode_test decode_test
+AM_LDFLAGS = -L../src -lgeohex3 -lc -lm
+AM_CPPFLAGS = -I../src
 
-TESTS = ./tmain
+TESTS = ./tmain ./encode_test ./decode_test

@@ -31,7 +31,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = tmain$(EXEEXT)
+check_PROGRAMS = tmain$(EXEEXT) encode_test$(EXEEXT) \
+	decode_test$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -40,12 +41,15 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
-am_tmain_OBJECTS = tmain-tmain.$(OBJEXT)
-tmain_OBJECTS = $(am_tmain_OBJECTS)
+decode_test_SOURCES = decode_test.c
+decode_test_OBJECTS = decode_test.$(OBJEXT)
+decode_test_LDADD = $(LDADD)
+encode_test_SOURCES = encode_test.c
+encode_test_OBJECTS = encode_test.$(OBJEXT)
+encode_test_LDADD = $(LDADD)
+tmain_SOURCES = tmain.c
+tmain_OBJECTS = tmain.$(OBJEXT)
 tmain_LDADD = $(LDADD)
-tmain_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(tmain_LDFLAGS) \
-	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -58,8 +62,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(tmain_SOURCES)
-DIST_SOURCES = $(tmain_SOURCES)
+SOURCES = decode_test.c encode_test.c tmain.c
+DIST_SOURCES = decode_test.c encode_test.c tmain.c
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -171,10 +175,9 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-tmain_SOURCES = tmain.c
-tmain_LDFLAGS = -L../src -lgeohex3 -lc -lm
-tmain_CPPFLAGS = -I../src
-TESTS = ./tmain
+AM_LDFLAGS = -L../src -lgeohex3 -lc -lm
+AM_CPPFLAGS = -I../src
+TESTS = ./tmain ./encode_test ./decode_test
 all: all-am
 
 .SUFFIXES:
@@ -215,9 +218,15 @@ clean-checkPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+decode_test$(EXEEXT): $(decode_test_OBJECTS) $(decode_test_DEPENDENCIES) 
+	@rm -f decode_test$(EXEEXT)
+	$(LINK) $(decode_test_OBJECTS) $(decode_test_LDADD) $(LIBS)
+encode_test$(EXEEXT): $(encode_test_OBJECTS) $(encode_test_DEPENDENCIES) 
+	@rm -f encode_test$(EXEEXT)
+	$(LINK) $(encode_test_OBJECTS) $(encode_test_LDADD) $(LIBS)
 tmain$(EXEEXT): $(tmain_OBJECTS) $(tmain_DEPENDENCIES) 
 	@rm -f tmain$(EXEEXT)
-	$(tmain_LINK) $(tmain_OBJECTS) $(tmain_LDADD) $(LIBS)
+	$(LINK) $(tmain_OBJECTS) $(tmain_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -225,7 +234,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tmain-tmain.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/decode_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/encode_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tmain.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -247,20 +258,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
-tmain-tmain.o: tmain.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tmain_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tmain-tmain.o -MD -MP -MF $(DEPDIR)/tmain-tmain.Tpo -c -o tmain-tmain.o `test -f 'tmain.c' || echo '$(srcdir)/'`tmain.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/tmain-tmain.Tpo $(DEPDIR)/tmain-tmain.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tmain.c' object='tmain-tmain.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tmain_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tmain-tmain.o `test -f 'tmain.c' || echo '$(srcdir)/'`tmain.c
-
-tmain-tmain.obj: tmain.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tmain_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tmain-tmain.obj -MD -MP -MF $(DEPDIR)/tmain-tmain.Tpo -c -o tmain-tmain.obj `if test -f 'tmain.c'; then $(CYGPATH_W) 'tmain.c'; else $(CYGPATH_W) '$(srcdir)/tmain.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/tmain-tmain.Tpo $(DEPDIR)/tmain-tmain.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tmain.c' object='tmain-tmain.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tmain_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tmain-tmain.obj `if test -f 'tmain.c'; then $(CYGPATH_W) 'tmain.c'; else $(CYGPATH_W) '$(srcdir)/tmain.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
