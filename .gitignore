@@ -14,3 +14,5 @@ libtool
 
 tmain
 geohex3
+decode_test
+encode_test
