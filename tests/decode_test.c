@@ -11,6 +11,16 @@ eqdouble(double a, double b)
 }
 
 int
+eqlon(double a, double b)
+{
+	double c = fabs(a - b);
+	if (c > 360.0) {
+		c -= 360.0;
+	}
+	return c < EPSILON;
+}
+
+int
 test_decode(const char *fname)
 {
 	FILE *f = fopen(fname, "r");
@@ -40,7 +50,7 @@ test_decode(const char *fname)
 		res = geohex3_get_zone_by_code(code, zone);
 		if (res < 0 ||
 			!eqdouble(lat, zone->lat) ||
-			!eqdouble(lon, zone->lon) ||
+			!eqlon(lon, zone->lon) ||
 			level != zone->level) {
 			fprintf(stderr, "%d, %lf %lf, %lf %lf, %d %d\n",
 				res, lat, zone->lat, lon, zone->lon,
