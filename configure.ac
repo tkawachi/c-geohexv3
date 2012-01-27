@@ -1,4 +1,4 @@
-AC_INIT(geohex3, 0.0.1, tkawachi@gmail.com)
+AC_INIT(geohex3, 0.0.2, tkawachi@gmail.com)
 AM_INIT_AUTOMAKE
 AC_PROG_CC
 AC_PROG_LIBTOOL
