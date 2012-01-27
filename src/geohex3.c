@@ -251,8 +251,12 @@ geohex3_get_zone_by_code(const char *code, struct geohex3_zone *zone)
 	struct loc h_loc = xy2loc(h_lon_x, h_lat_y);
 	if (h_loc.lon > 180) {
 		h_loc.lon -= 360;
+		h_x -= pow(3, level);
+		h_y += pow(3, level);
 	} else if (h_loc.lon < -180) {
 		h_loc.lon += 360;
+		h_x += pow(3, level);
+		h_y -= pow(3, level);
 	}
 
 	if (zone->code != code) {
